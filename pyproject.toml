@@ -1,11 +1,11 @@
 [tool.poetry]
 name = "pinter"
-version = "0.1.0"
+version = "0.1.1"
+license = "MIT"
 description = "Print INTERfaces and ip addresses"
-authors = [
-  {name = "Marcin Marzec"},
-]
+authors = ["Marcin Marzec"]
 readme = "README.md"
+homepage = "https://github.com/mmarzec/pinter"
 
 
 [tool.poetry.dependencies]
