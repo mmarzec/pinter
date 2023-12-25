@@ -1,0 +1,23 @@
+[tool.poetry]
+name = "pinter"
+version = "0.1.0"
+description = "Print INTERfaces and ip addresses"
+authors = [
+  {name = "Marcin Marzec"},
+]
+readme = "README.md"
+
+
+[tool.poetry.dependencies]
+python = "^3.8"
+psutil = "^5.9.6"
+rich = "^13.7.0"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
+
+
+[tool.poetry.scripts]
+pinter = "pinter.__main__:cli"
