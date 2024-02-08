@@ -1,7 +1,5 @@
 import psutil
 import socket
-from rich.console import Console
-from rich.table import Table
 
 
 def collect_intf_addresses():
@@ -27,11 +25,8 @@ def collect_intf_addresses():
 
 
 def cli():
-    table = Table(box=None)
-    table.add_column()
-    table.add_column(style="cyan")
     intf_addresses = collect_intf_addresses()
+    intf_col_width = len(max(intf_addresses.keys(), key = len))
+    addr_col_width = len(max(intf_addresses.values(), key = lambda x: len(x) if x else 0))
     for intf in intf_addresses:
-        table.add_row(intf, intf_addresses[intf])
-    console = Console()
-    console.print(table)
+        print(f'{intf:<{intf_col_width}}  \033[36m{intf_addresses[intf] or "":<{addr_col_width}}\033[0m')
