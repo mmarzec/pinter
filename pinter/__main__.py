@@ -1,8 +1,9 @@
 import psutil
 import socket
+import sys
 
 
-def collect_intf_addresses():
+def collect_intf_addresses(iall=None):
     interfaces_psutil = psutil.net_if_addrs()
 
     intf_addresses = {}
@@ -11,8 +12,9 @@ def collect_intf_addresses():
     intf_names = (intf[1] for intf in socket.if_nameindex())
 
     # filter
-    intf_names = (intf for intf in intf_names if intf.startswith(('enp', 'eth', 'wl', 'eno', 'br', 'tun')))
-    intf_names = (intf for intf in intf_names if not intf.startswith(('br-')))
+    if not iall:
+        intf_names = (intf for intf in intf_names if intf.startswith(('enp', 'eth', 'wl', 'eno', 'br', 'tun')))
+        intf_names = (intf for intf in intf_names if not intf.startswith(('br-')))
 
     # get addresses
     for intf in intf_names:
@@ -24,8 +26,35 @@ def collect_intf_addresses():
     return intf_addresses
 
 
+def print_help():
+    print(f'''Description:
+  Print network interfaces and ip addresses
+
+Usage:
+  pinter [options]
+
+Options:
+  a  all interfaces
+  h  help
+
+''')
+
+
 def cli():
-    intf_addresses = collect_intf_addresses()
+
+    # cli options
+    options = ''
+    if len(sys.argv) > 1:
+        options = sys.argv[1]
+
+    iall = None
+    if 'a' in options:
+        iall = True
+
+    if 'h' in options:
+        print_help()
+
+    intf_addresses = collect_intf_addresses(iall)
     intf_col_width = len(max(intf_addresses.keys(), key = len))
     addr_col_width = len(max(intf_addresses.values(), key = lambda x: len(x) if x else 0))
     for intf in intf_addresses:
