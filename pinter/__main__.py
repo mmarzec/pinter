@@ -18,10 +18,10 @@ def collect_intf_addresses(iall=None):
 
     # get addresses
     for intf in intf_names:
-        intf_addresses[intf] = None
+        intf_addresses[intf] = []
         for address in interfaces_psutil[intf]:
             if address.family == socket.AF_INET:
-                intf_addresses[intf] = address.address
+                intf_addresses[intf].append(address.address)
 
     return intf_addresses
 
@@ -56,6 +56,13 @@ def cli():
 
     intf_addresses = collect_intf_addresses(iall)
     intf_col_width = len(max(intf_addresses.keys(), key = len))
-    addr_col_width = len(max(intf_addresses.values(), key = lambda x: len(x) if x else 0))
     for intf in intf_addresses:
-        print(f'{intf:<{intf_col_width}}  \033[36m{intf_addresses[intf] or "":<{addr_col_width}}\033[0m')
+        if not intf_addresses[intf]:
+            intf_addresses[intf].append('')
+
+        # print first ip
+        print(f'{intf:<{intf_col_width}}  \033[36m{intf_addresses[intf][0]}\033[0m')
+
+        # print rest ips
+        for ip_addr in intf_addresses[intf][1:]:
+            print(f'{"":<{intf_col_width}}  \033[36m{ip_addr}\033[0m')
