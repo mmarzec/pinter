@@ -56,14 +56,15 @@ def cli():
 
     if 'h' in options:
         print_help()
+        return
 
     include_mac = False
     if 'm' in options:
         include_mac = True
 
     intf_addresses = collect_intf_addresses(include_all)
-    intf_col_width = len(max(intf_addresses.keys(), key=len))
-    ip_col_width = len(max([ip for intf in intf_addresses for ip in intf_addresses[intf]['ip']], key=len))
+    intf_col_width = len(max(intf_addresses.keys(), key=len, default=''))
+    ip_col_width = len(max([ip for intf in intf_addresses for ip in intf_addresses[intf]['ip']], key=len, default=''))
 
     for intf in intf_addresses:
         if not intf_addresses[intf]['ip']:
@@ -79,3 +80,7 @@ def cli():
         # print rest rows
         for ip_addr in intf_addresses[intf]['ip'][1:]:
             print(f'{"":<{intf_col_width}}  \033[36m{ip_addr}\033[0m')
+
+
+if __name__ == "__main__":
+    cli()
