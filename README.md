@@ -52,8 +52,9 @@ wlp2s0  192.168.1.57
 tun0    10.8.0.2
 ```
 
-Important addreses starts with: (`br`, `eno`, `enp`, `eth`, `wl`, `tun`).
-Other addresses are hidden.
+Interfaces whose names start with `lo`, `docker`, `veth`, `br-`, `virbr` or `vnet`
+(loopback, containers and VM plumbing) are hidden. Everything else is shown.
+If nothing is left to show, pinter says so and suggests `pinter a`.
 
 
 ### All interfaces

@@ -2,6 +2,9 @@ import psutil
 import socket
 import sys
 
+# interface name prefixes hidden by default: loopback, containers and VM plumbing
+HIDDEN_PREFIXES = ('lo', 'docker', 'veth', 'br-', 'virbr', 'vnet')
+
 
 def collect_intf_addresses(include_all=False):
     interfaces_psutil = psutil.net_if_addrs()
@@ -13,13 +16,12 @@ def collect_intf_addresses(include_all=False):
 
     # filter
     if not include_all:
-        intf_names = (intf for intf in intf_names if intf.startswith(('enp', 'eth', 'wl', 'eno', 'br', 'tun')))
-        intf_names = (intf for intf in intf_names if not intf.startswith(('br-')))
+        intf_names = (intf for intf in intf_names if not intf.startswith(HIDDEN_PREFIXES))
 
     # get addresses
     for intf in intf_names:
         intf_addresses[intf] = {'ip': [], 'mac': ''}
-        for address in interfaces_psutil[intf]:
+        for address in interfaces_psutil.get(intf, []):
             if address.family == socket.AF_INET:
                 intf_addresses[intf]['ip'].append(address.address)
             elif address.family == socket.AF_PACKET:
@@ -63,6 +65,13 @@ def cli():
         include_mac = True
 
     intf_addresses = collect_intf_addresses(include_all)
+    if not intf_addresses:
+        if include_all:
+            print('No network interfaces found.', file=sys.stderr)
+        else:
+            print("No interfaces to show. Use 'pinter a' to list all interfaces.", file=sys.stderr)
+        return
+
     intf_col_width = len(max(intf_addresses.keys(), key=len, default=''))
     ip_col_width = len(max([ip for intf in intf_addresses for ip in intf_addresses[intf]['ip']], key=len, default=''))
 
