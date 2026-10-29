@@ -11,6 +11,7 @@ By default it shows only the interfaces that usually matter (Ethernet, Wi-Fi, br
 - Optional MAC addresses
 - Optional view of all interfaces, without filtering
 - Only one dependency: [psutil](https://github.com/giampaolo/psutil)
+- Output is in color unless stdout isn’t a terminal or NO_COLOR env is set.
 
 ## Installation
 

@@ -1,3 +1,4 @@
+import os
 import psutil
 import socket
 import sys
@@ -28,6 +29,10 @@ def collect_intf_addresses(include_all=False):
                 intf_addresses[intf]['mac'] = address.address
 
     return intf_addresses
+
+
+def use_colour():
+    return sys.stdout.isatty() and not os.environ.get('NO_COLOR')
 
 
 def print_help():
@@ -75,20 +80,22 @@ def cli():
     intf_col_width = len(max(intf_addresses.keys(), key=len, default=''))
     ip_col_width = len(max([ip for intf in intf_addresses for ip in intf_addresses[intf]['ip']], key=len, default=''))
 
+    cyan, magenta, reset = ('\033[36m', '\033[35m', '\033[0m') if use_colour() else ('', '', '')
+
     for intf in intf_addresses:
         if not intf_addresses[intf]['ip']:
             intf_addresses[intf]['ip'].append('')
 
         # print first row
-        row = f'{intf:<{intf_col_width}}  \033[36m{intf_addresses[intf]["ip"][0]:<{ip_col_width}}\033[0m'
+        row = f'{intf:<{intf_col_width}}  {cyan}{intf_addresses[intf]["ip"][0]:<{ip_col_width}}{reset}'
 
         if include_mac:
-            row = f'{row}  \033[35m{intf_addresses[intf]["mac"]}\033[0m'
+            row = f'{row}  {magenta}{intf_addresses[intf]["mac"]}{reset}'
         print(row)
 
         # print rest rows
         for ip_addr in intf_addresses[intf]['ip'][1:]:
-            print(f'{"":<{intf_col_width}}  \033[36m{ip_addr}\033[0m')
+            print(f'{"":<{intf_col_width}}  {cyan}{ip_addr}{reset}')
 
 
 if __name__ == "__main__":
